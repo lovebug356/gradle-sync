@@ -49,8 +49,6 @@ fn test_fail_to_decrease_version_name() {
     let res = version.synchronize_version(&new_version_name);
     assert!(res.is_err());
     let version_err = res.err().unwrap();
-    match version_err {
-        Error::VersionNotIncreasing(_) => {}
-        _ => {unreachable!()}
-    }
+    assert_eq!(version_err, Error::VersionNotIncreasing(
+            "version not increasing (old)0.2.0 > (new)0.1.2".to_string()));
 }

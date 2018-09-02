@@ -77,10 +77,8 @@ fn test_fail_if_gradle_file_does_not_contain_version_code () {
     }".as_bytes();
 
     let file = GradleBuffer::from(file_content);
-    match file {
-        Err(Error::VersionNotFound(_)) => {},
-        _ => {unreachable!()}
-    }
+    assert_eq!(file.err().unwrap(), Error::VersionNotFound(
+            "failed to find versionCode".to_string()));
 }
 
 #[test]
@@ -93,10 +91,8 @@ fn test_fail_if_gradle_file_does_not_contain_version_name () {
     }".as_bytes();
 
     let file = GradleBuffer::from(file_content);
-    match file {
-        Err(Error::VersionNotFound(_)) => {},
-        _ => {unreachable!()}
-    }
+    assert_eq!(file.err().unwrap(), Error::VersionNotFound(
+            "failed to find versionName".to_string()));
 }
 
 #[test]

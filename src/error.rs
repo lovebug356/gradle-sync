@@ -1,6 +1,6 @@
 use std::io::Error as IoError;
 
-#[derive(Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Error {
     ParsingFailed(String),
     VersionNotFound(String),
