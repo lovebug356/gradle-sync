@@ -1,5 +1,6 @@
 # Gradle-Sync
 [![Build Status](https://travis-ci.org/lovebug356/gradle-sync.svg?branch=master)](https://travis-ci.org/lovebug356/gradle-sync)
+[![Build status](https://ci.appveyor.com/api/projects/status/86s3teekhbj2a25h?svg=true)](https://ci.appveyor.com/project/lovebug356/gradle-sync)
 [![Latest version](https://img.shields.io/crates/v/gradle-sync.svg)](https://crates.io/crates/gradle-sync)
 
 **Small utility to synchronize the gradle version with the cargo version.**
