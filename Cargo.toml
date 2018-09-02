@@ -2,6 +2,11 @@
 name = "gradle-sync"
 version = "0.1.0"
 authors = ["Thijs Vermeir <thijsvermeir@gmail.com>"]
+description = "Small utility to synchronize the gradle version with the cargo version."
+license = "MIT/Apache-2.0"
+repository = "https://github.com/lovebug356/gradle-sync"
+keywords = ["cargo", "gradle", "version"]
+categories = ["development-tools"]
 
 [dependencies]
 semver = "0.9.0"
