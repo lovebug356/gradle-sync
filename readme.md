@@ -6,15 +6,14 @@
 
 ## Usage
 
-Add build dependency in ```Cargo.toml```:
+First, add build dependency in ```Cargo.toml```:
 
 ```toml
 [build-dependencies]
-gradle-sync = 0.1.4
-
+gradle-sync = "0.1.4"
 ```
 
-Add the following code snipper to ```build.rs```:
+and secondly, add the following code snippet to ```build.rs``` (with a reference to the ```build.gradle``` file):
 
 ```[rust]
 extern crate gradle_sync;
@@ -25,6 +24,8 @@ fn main() {
 }
 
 ```
+
+When you now build your project, the version specified in ```Cargo.toml``` file is used as ```versionName``` in the ```build.gradle``` file. If required, the ```versionCode``` is also incremented.
 
 ## License
 
