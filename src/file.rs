@@ -4,7 +4,7 @@ use buffer::GradleBuffer;
 use std::fs::File;
 use std::env;
 use std::fs::OpenOptions;
-use semver::Version;
+use version::sem_version_parse;
 
 pub struct GradleFile {
     filename: String,
@@ -29,7 +29,9 @@ impl GradleFile {
         let pkg_version = env::var("CARGO_PKG_VERSION").unwrap();
         let mut gradle_file = GradleFile::new(filename)?;
         gradle_file.synchronize_version(&pkg_version)?;
-        gradle_file.write()?;
+        if gradle_file.buffer.is_modified() {
+            gradle_file.write()?;
+        }
         Ok(())
     }
 
@@ -48,16 +50,5 @@ impl GradleFile {
                 Error::IoError(reason)
             })?;
         self.buffer.write(&mut fd)
-    }
-}
-
-fn sem_version_parse(version_string: &str) -> GradleResult<Version> {
-    let version = Version::parse(version_string);
-    match version {
-        Err(_) => {
-            let reason = format!("failed to parse version string '{}'", version_string);
-            Err(Error::ParsingFailed(reason))
-        },
-        Ok(version) => Ok(version)
     }
 }

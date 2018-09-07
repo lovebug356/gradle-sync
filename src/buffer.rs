@@ -11,7 +11,8 @@ use semver::Version;
 
 pub struct GradleBuffer {
     lines: Vec<String>,
-    version: GradleVersion
+    version: GradleVersion,
+    modified: bool
 }
 
 impl GradleBuffer {
@@ -42,9 +43,12 @@ impl GradleBuffer {
             version: GradleVersion::new(
                          version_code.unwrap(),
                          version_name.unwrap()
-                         )
+                         ),
+            modified: false
         })
     }
+
+    pub fn is_modified(&self) -> bool {self.modified}
 
     #[cfg(test)]
     pub fn version(&self) -> &GradleVersion {
@@ -52,7 +56,7 @@ impl GradleBuffer {
     }
 
     pub fn synchronize_version(&mut self, new_version: &Version) -> GradleResult<()> {
-        self.version.synchronize_version(&new_version)?;
+        self.modified |= self.version.synchronize_version(&new_version)?;
         Ok(())
     }
 

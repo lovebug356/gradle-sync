@@ -51,7 +51,7 @@ fn test_parse_version_name_failed() {
 
 #[test]
 fn test_read_version_from_gradle_file() {
-    let file_content ="
+    let buffer_content ="
     android {
         defaultConfig {
             versionCode 2
@@ -61,8 +61,9 @@ fn test_read_version_from_gradle_file() {
     let expected_code = 2;
     let expected_version_name = Version::parse("1.1.2").unwrap();
 
-    let file = GradleBuffer::from(file_content).unwrap();
-    let version = file.version();
+    let buffer = GradleBuffer::from(buffer_content).unwrap();
+    assert_eq!(buffer.is_modified(), false);
+    let version = buffer.version();
     assert_eq!(version.code(), expected_code);
     assert_eq!(version.version(), &expected_version_name);
 }
@@ -97,7 +98,7 @@ fn test_fail_if_gradle_file_does_not_contain_version_name () {
 
 #[test]
 fn test_synchronize_version() {
-    let file_content ="
+    let buffer_content ="
     android {
         defaultConfig {
             versionCode 2
@@ -107,10 +108,32 @@ fn test_synchronize_version() {
     let new_version = Version::parse("1.2.0").unwrap();
     let expected_code = 3;
 
-    let mut file = GradleBuffer::from(file_content).unwrap();
-    file.synchronize_version(&new_version)
+    let mut buffer = GradleBuffer::from(buffer_content).unwrap();
+    buffer.synchronize_version(&new_version)
         .expect("failed to synchronize version");
-    let version = file.version();
+    let version = buffer.version();
+    assert_eq!(buffer.is_modified(), true);
+    assert_eq!(version.code(), expected_code);
+    assert_eq!(version.version(), &new_version);
+}
+
+#[test]
+fn test_not_modified_if_version_not_changed() {
+    let buffer_content ="
+    android {
+        defaultConfig {
+            versionCode 2
+            versionName \"1.1.2\"
+        }
+    }".as_bytes();
+    let new_version = Version::parse("1.1.2").unwrap();
+    let expected_code = 2;
+
+    let mut buffer = GradleBuffer::from(buffer_content).unwrap();
+    buffer.synchronize_version(&new_version)
+        .expect("failed to synchronize version");
+    let version = buffer.version();
+    assert_eq!(buffer.is_modified(), false);
     assert_eq!(version.code(), expected_code);
     assert_eq!(version.version(), &new_version);
 }
