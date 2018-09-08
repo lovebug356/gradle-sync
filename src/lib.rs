@@ -5,10 +5,13 @@ extern crate regex;
 mod tests;
 
 mod version;
-mod buffer;
+mod configfile;
+pub use configfile::ConfigurationFormat;
+pub use configfile::GradleFile;
+mod buildgradle;
+pub use buildgradle::BuildGradleContent;
 
 mod error;
 pub use error::Error;
 
-mod file;
-pub use file::GradleFile;
+pub type BuildGradleFile = GradleFile<BuildGradleContent>;

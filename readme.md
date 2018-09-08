@@ -17,12 +17,13 @@ gradle-sync = "0.1.4"
 
 and secondly, add the following code snippet to ```build.rs``` (with a reference to the ```build.gradle``` file):
 
-```[rust]
+```rust
 extern crate gradle_sync;
-use gradle_sync::GradleFile;
+use gradle_sync::BuildGradleFile;
 
 fn main() {
-    GradleFile::new_and_sync_with_cargo("./app/build.gradle").unwrap();
+    BuildGradleFile::new("./app/build.gradle").unwrap()
+      .sync_with_cargo().unwrap();
 }
 
 ```

@@ -1,22 +1,20 @@
+use semver::Version;
+use regex::{Regex, Captures};
+use configfile::ConfigurationFormat;
 use error::GradleResult;
+use std::io::{Read, Write};
+use std::io::{BufReader, BufRead};
 use error::Error;
 use version::GradleVersion;
-use std::io::Read;
-use std::io::Write;
-use std::io::BufReader;
-use std::io::BufRead;
-use regex::Regex;
-use regex::Captures;
-use semver::Version;
 
-pub struct GradleBuffer {
+pub struct BuildGradleContent {
     lines: Vec<String>,
     version: GradleVersion,
     modified: bool
 }
 
-impl GradleBuffer {
-    pub fn from<R: Read>(reader: R) -> GradleResult<Self> {
+impl ConfigurationFormat for BuildGradleContent {
+    fn from<R: Read>(reader: R) -> GradleResult<Self>{
         let mut version_code: Option<u32> = None;
         let mut version_name: Option<Version> = None;
 
@@ -38,7 +36,7 @@ impl GradleBuffer {
         if version_name.is_none() {
             return Err(Error::VersionNotFound("failed to find versionName".to_string()))
         }
-        Ok(GradleBuffer{
+        Ok(Self{
             lines,
             version: GradleVersion::new(
                          version_code.unwrap(),
@@ -47,20 +45,19 @@ impl GradleBuffer {
             modified: false
         })
     }
-
-    pub fn is_modified(&self) -> bool {self.modified}
-
-    #[cfg(test)]
-    pub fn version(&self) -> &GradleVersion {
-        &self.version
+    fn current_version(&self) -> GradleResult<&GradleVersion> {
+        Ok(&self.version)
     }
-
-    pub fn synchronize_version(&mut self, new_version: &Version) -> GradleResult<()> {
-        self.modified |= self.version.synchronize_version(&new_version)?;
+    fn is_modified(&self) -> bool {
+        self.modified
+    }
+    fn sync_version(&mut self, new_version: &Version) -> GradleResult<()> {
+        if self.version.synchronize_version(new_version)? {
+            self.modified = true
+        }
         Ok(())
     }
-
-    pub fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()> {
+    fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()> {
         for line in self.lines.iter() {
             let mut line = line.clone();
             line = replace_version_code(line, self.version.code());
@@ -131,4 +128,3 @@ pub fn replace_version_name(line: String, version: &Version) -> String {
         None => line
     }
 }
-
