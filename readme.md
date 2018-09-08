@@ -12,7 +12,7 @@ First, add build dependency in ```Cargo.toml```:
 
 ```toml
 [build-dependencies]
-gradle-sync = "0.1.4"
+gradle-sync = "0.2.0"
 ```
 
 and secondly, add the following code snippet to ```build.rs``` (with a reference to the ```build.gradle``` file):

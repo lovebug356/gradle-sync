@@ -1,6 +1,6 @@
 [package]
 name = "gradle-sync"
-version = "0.1.4"
+version = "0.2.0"
 authors = ["Thijs Vermeir <thijsvermeir@gmail.com>"]
 description = "Small utility to synchronize the gradle version with the cargo version."
 license = "MIT/Apache-2.0"
