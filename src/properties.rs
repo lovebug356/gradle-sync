@@ -1,7 +1,7 @@
 use semver::Version;
 use regex::Regex;
 use configfile::ConfigurationFormat;
-use std::io::{Read, Write};
+use std::io::Read;
 use std::io::{BufRead, BufReader};
 use error::GradleResult;
 use error::Error;
@@ -47,20 +47,10 @@ impl ConfigurationFormat for PropertiesContent {
         }
         Ok(())
     }
-    fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()> {
-        for line in self.lines.iter() {
-            let mut line = line.clone();
-            line = replace_project_version_from_line(line, self.version.version());
-            writer.write(line.as_bytes())
-                .map_err(|_err| {
-                    Error::IoError("failed to write".to_string())
-                })?;
-            writer.write(b"\n")
-                .map_err(|_err| {
-                    Error::IoError("failed to write".to_string())
-                })?;
-        };
-        Ok(())
+    fn lines(&self) -> Vec<String> {
+        self.lines.iter().map(|line|{
+            replace_project_version_from_line(line.clone(), self.version.version())
+        }).collect()
     }
 }
 

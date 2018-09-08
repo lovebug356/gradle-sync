@@ -2,7 +2,7 @@ use semver::Version;
 use regex::{Regex, Captures};
 use configfile::ConfigurationFormat;
 use error::GradleResult;
-use std::io::{Read, Write};
+use std::io::Read;
 use std::io::{BufReader, BufRead};
 use error::Error;
 use version::GradleVersion;
@@ -57,21 +57,12 @@ impl ConfigurationFormat for BuildGradleContent {
         }
         Ok(())
     }
-    fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()> {
-        for line in self.lines.iter() {
-            let mut line = line.clone();
-            line = replace_version_code(line, self.version.code());
-            line = replace_version_name(line, self.version.version());
-            writer.write(line.as_bytes())
-                .map_err(|_err| {
-                    Error::IoError("failed to write".to_string())
-                })?;
-            writer.write(b"\n")
-                .map_err(|_err| {
-                    Error::IoError("failed to write".to_string())
-                })?;
-        };
-        Ok(())
+    fn lines(&self) -> Vec<String> {
+        self.lines.iter().map(|line|{
+            let line = replace_version_code(line.clone(), self.version.code());
+            let line = replace_version_name(line, self.version.version());
+            line
+        }).collect()
     }
 }
 

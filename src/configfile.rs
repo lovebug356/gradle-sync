@@ -57,5 +57,19 @@ pub trait ConfigurationFormat where Self: Sized {
     fn current_version(&self) -> GradleResult<&GradleVersion>;
     fn is_modified(&self) -> bool;
     fn sync_version(&mut self, new_version: &Version) -> GradleResult<()>;
-    fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()>;
+    fn lines(&self) -> Vec<String>;
+
+    fn write<W: Write> (&self, writer: &mut W) -> GradleResult<()> {
+        for line in self.lines().iter() {
+            writer.write(line.as_bytes())
+                .map_err(|_err| {
+                    Error::IoError("failed to write".to_string())
+                })?;
+            writer.write(b"\n")
+                .map_err(|_err| {
+                    Error::IoError("failed to write".to_string())
+                })?;
+        };
+        Ok(())
+    }
 }
