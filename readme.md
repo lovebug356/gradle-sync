@@ -20,9 +20,12 @@ and secondly, add the following code snippet to ```build.rs``` (with a reference
 ```rust
 extern crate gradle_sync;
 use gradle_sync::BuildGradleFile;
+use gradle_sync::GradlePropertiesFile;
 
 fn main() {
     BuildGradleFile::new("./app/build.gradle").unwrap()
+      .sync_with_cargo().unwrap();
+    GradlePropertiesFile::new("./gradle.properties").unwrap()
       .sync_with_cargo().unwrap();
 }
 
